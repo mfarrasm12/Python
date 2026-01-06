@@ -74,14 +74,25 @@ def returnBook():
                     return
                 print()
     print("Book Not found!")
+
+def removeBook():
+    book = input("Book Name: ")
+    for item in library:
+        if book == item["Book"]:
+            library.remove(item)
+            print("Book has been removed")
+            print()
+            return
+    print("Book Not found")
                             
 while True:
     print("1. ADD BOOKS")
     print("2. BORROW BOOKS")
-    print("3. RETURN BOOK")
+    print("3. RETURN BOOKS")
     print("4. ADD EXISTING BOOK")
     print("5. SHOW AVAILABLE BOOKS")
-    print("6. EXIT")
+    print("6. REMOVE BOOK")
+    print("7. EXIT")
 
     choice = int(input("Choose: "))
     match choice:
@@ -96,6 +107,8 @@ while True:
         case 5:
             showBook()
         case 6:
+            removeBook()
+        case 7:
             print("Thank You for Visiting")
             break
         case _:
