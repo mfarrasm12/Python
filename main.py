@@ -3,12 +3,38 @@ library = []
 def showBook():
     for item in library:
         print(item)
+    print()
+
+def addExistingbook():
+    book = input("Book Name: ")
+    for item in library:
+        if book == item["Book"]:
+            print(f"Total Book {item['Quantity']}, Cap at {item['MaxQuantity']}, borrowed: {item['Borrowed']}")
+            while True:
+                add  = int(input("How many books do you want to add: "))
+                if add < 0:
+                    print("Cannot Input under 0")
+                else:
+                    item["MaxQuantity"] += add
+                    item["Quantity"] += add
+                    print("Thank you")
+                    print()
+                    return
+    print("Book not Found!")
 
 def addBooks():
-    book = input("Name of the book: ")
-    Qty = int(input("How many books: "))
-    library.append({"Book": book, "Quantity": Qty, "MaxQuantity": Qty})
-    print("Added Succesfully")
+    while True:
+        book = input("Name of the book: ")
+        for item in library:
+            if item["Book"] == book:
+                print("This book already exist")
+                print()
+                return
+        Qty = int(input("How many books: "))
+        library.append({"Book": book, "Quantity": Qty, "MaxQuantity": Qty, "Borrowed": 0})
+        print("Added Succesfully")
+        print()
+        return
 
 def borrowBook():
     while True:
@@ -20,9 +46,13 @@ def borrowBook():
                     borrow = int(input("How many Books you want to borrow: "))
                     if borrow > item["Quantity"]:
                         print("Borrowing Exceed the total of books")
+                    elif borrow < 0:
+                        print("Cannot below 0")
                     else:
                         item["Quantity"] -= borrow
+                        item["Borrowed"] += borrow
                         print("Thank you for Borrowing")
+                        print()
                         return
         print("Book not Found!")
 
@@ -35,18 +65,23 @@ def returnBook():
                 returning = int(input("How Many Books Do You Want To Return: "))
                 if returning > available_space:
                     print(f"Quantity capped at {item['MaxQuantity']}")
+                elif returning < 0:
+                    print("Cannot Input Below 0")
                 else:
                     item["Quantity"] += returning
+                    item["Borrowed"] -= returning
                     print("Thank you for returning")
                     return
+                print()
     print("Book Not found!")
                             
 while True:
     print("1. ADD BOOKS")
     print("2. BORROW BOOKS")
     print("3. RETURN BOOK")
-    print("4. SHOW AVAILABLE BOOKS")
-    print("5. EXIT")
+    print("4. ADD EXISTING BOOK")
+    print("5. SHOW AVAILABLE BOOKS")
+    print("6. EXIT")
 
     choice = int(input("Choose: "))
     match choice:
@@ -57,9 +92,11 @@ while True:
         case 3:
             returnBook()
         case 4:
-            showBook()
+            addExistingbook()
         case 5:
+            showBook()
+        case 6:
             print("Thank You for Visiting")
             break
         case _:
-            print("Not a Valid Choice")
+            print("Choice Not Valid")
