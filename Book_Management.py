@@ -1,9 +1,22 @@
 library = []
 
 def showBook():
-    for item in library:
-        print(item)
-    print()
+    WIDTH = 70
+    if not library:
+        print("No Book currently in stock")
+        print()
+        return
+    else:
+        print("=" * WIDTH)
+        print(f"|{'LIBRARY INVENTORY'.center(WIDTH)}|")
+        print("=" * WIDTH)
+        print(f"|{'Book Name':<30}|{'Available':<10}|{'Borrowed':<10}|{'Max':<10}|")
+        print("-" * WIDTH)
+        for item in library:
+            book_name = item['Book'][:30]
+            print(f"|{book_name:<30}|{item['Quantity']:<10}|{item['Borrowed']:<10}|{item['MaxQuantity']:<10}|")
+        print("=" * WIDTH)
+        print()
 
 def addExistingbook():
     book = input("Book Name: ")
