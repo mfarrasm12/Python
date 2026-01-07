@@ -1,22 +1,23 @@
 library = []
 
 def showBook():
-    WIDTH = 70
     if not library:
         print("No Book currently in stock")
         print()
         return
-    else:
-        print("=" * WIDTH)
-        print(f"|{'LIBRARY INVENTORY'.center(WIDTH)}|")
-        print("=" * WIDTH)
-        print(f"|{'Book Name':<30}|{'Available':<10}|{'Borrowed':<10}|{'Max':<10}|")
-        print("-" * WIDTH)
-        for item in library:
-            book_name = item['Book'][:30]
-            print(f"|{book_name:<30}|{item['Quantity']:<10}|{item['Borrowed']:<10}|{item['MaxQuantity']:<10}|")
-        print("=" * WIDTH)
-        print()
+    book_width = max(len(item["Book"]) for item in library)
+    book_width = max(book_width, len("Book Name"))
+    qty_width = 10
+    WIDTH = book_width + qty_width * 3 + 5
+    print("=" * WIDTH)
+    print("|" + "LIBRARY INVENTORY".center(WIDTH - 2) + "|")
+    print("=" * WIDTH)
+    print(f"|{'Book Name':<{book_width}}|{'Available':<{qty_width}}|{'Borrowed':<{qty_width}}|{'Max':<{qty_width}}|")
+    print("-" * WIDTH)
+    for item in library:
+        print(f"|{item['Book']:<{book_width}}|{item['Quantity']:<{qty_width}}|{item['Borrowed']:<{qty_width}}|{item['MaxQuantity']:<{qty_width}}|")
+    print("=" * WIDTH)
+    print()
 
 def addExistingbook():
     book = input("Book Name: ")
@@ -97,15 +98,31 @@ def removeBook():
             print()
             return
     print("Book Not found")
+
+def searchBook():
+    keyword = input("Search Book: ").upper()
+    found = False
+    for item in library:
+        title = item["Book"].upper()
+        clean_title = title.replace(":", "").replace("'", "").replace(",", "").replace(".", "").replace("-", "").replace("_", "")
+        word = clean_title
+        if keyword in word:
+            print(f"{item['Book']} (Available: {item['Quantity']})")
+            found = True
+    if not found:
+        print("Book not Found!")
+    print()
+
                             
 while True:
     print("1. ADD BOOKS")
     print("2. BORROW BOOKS")
     print("3. RETURN BOOKS")
     print("4. ADD EXISTING BOOK")
-    print("5. SHOW AVAILABLE BOOKS")
-    print("6. REMOVE BOOK")
-    print("7. EXIT")
+    print("5. SEARCH FOR A BOOK")
+    print("6. SHOW AVAILABLE BOOKS")
+    print("7. REMOVE BOOK")
+    print("8. EXIT")
 
     choice = int(input("Choose: "))
     match choice:
@@ -118,10 +135,12 @@ while True:
         case 4:
             addExistingbook()
         case 5:
-            showBook()
+            searchBook()
         case 6:
-            removeBook()
+            showBook()
         case 7:
+            removeBook()
+        case 8:
             print("Thank You for Visiting")
             break
         case _:
