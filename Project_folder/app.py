@@ -1,8 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for
-from flask import session
+from flask import Flask, render_template, request, redirect, url_for, session
+from dotenv import load_dotenv
+import os
+
+load_dotenv()
 
 app = Flask(__name__)
-app.secret_key = "library-secret-key"
+app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key")
+
 
 # ======== DATA STORAGE (TEMPORARY) =========
 library = []
