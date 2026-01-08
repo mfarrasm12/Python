@@ -84,7 +84,8 @@ def adminMenu():
         print("2. Add Existing Book")
         print("3. Remove book")
         print("4. Show books")
-        print("5. Logout")
+        print("5. Show Borrowed Records")
+        print("6. Logout")
 
         choice = int(input("Choose: "))
         match choice:
@@ -97,9 +98,34 @@ def adminMenu():
             case 4:
                 showBook()
             case 5:
+                showBorrowedRecords()
+            case 6:
                 return
             case _:
                 print("Invalid Choice")
+
+def showBorrowedRecords():
+    has_data = False
+    book_width = max(len(item["Book"]) for item in library)
+    book_width = max(book_width, len("Book Name"))
+    qty_width = 10
+    borrowed_width = 21
+    WIDTH = book_width + qty_width * 3 + 5
+    print("=" * WIDTH)
+    print("|" + "BORROWED BOOK RECORDS".center(WIDTH-2) + "|")
+    print("=" * WIDTH)
+    print(f"|{'Book Name':<{book_width}}|{'User':<{qty_width}}|{'Borrowed':<{borrowed_width}}|")
+    print("-" * WIDTH)
+    for username, data in users.items():
+        borrowed = data["Borrowed"]
+        for book, qty in borrowed.items():
+            if borrowed:
+                has_data = True
+                print(f"|{book:<{book_width}}|{username:<{qty_width}}|{qty:<{borrowed_width}}|")
+    if not has_data:
+        print("No books are currently borrowed")
+    print("=" * WIDTH)
+    print()
 
 # ========================= USER FUNCTIONS ==============================
 
@@ -150,14 +176,25 @@ def returnBook():
 
 def searchBook():
     keyword = input("Search Book: ").upper()
+    keyword = keyword.replace(":", "").replace("'", "").replace(",", "").replace(".", "").replace("-", "").replace("_", "").strip()
     found = False
+    book_width = max(len(item["Book"]) for item in library)
+    book_width = max(book_width, len("Book Name"))
+    qty_width = 10
+    WIDTH = book_width + qty_width + 3
+    print("=" * WIDTH)
+    print("|" + "SEARCHED BOOKS".center(WIDTH - 2)+ "|")
+    print("=" * WIDTH)
+    print(f"|{'Book Name':<{book_width}}|{'Quantity':<{qty_width}}|")
+    print("-" * WIDTH)
     for item in library:
         title = item["Book"].upper()
         clean_title = title.replace(":", "").replace("'", "").replace(",", "").replace(".", "").replace("-", "").replace("_", "")
-        word = clean_title
-        if keyword in word:
-            print(f"{item['Book']} (Available: {item['Quantity']})")
+        if keyword in clean_title:
+            print(f"|{item['Book']:<{book_width}}|{item['Quantity']:<{qty_width}}|")
             found = True
+    print("=" * WIDTH)
+    print()
     if not found:
         print("Book not Found!")
     print()
@@ -185,16 +222,25 @@ def userRegister():
     if username in users:
         print("Username already exists\n")
         return
-    users[username] = {"Borrowed": {}}
+    password = input("Password: ")
+    confirm = input("Confirm password: ")
+    if password != confirm:
+        print("Password does not match\n")
+        return
+    users[username] = {"Password": password,"Borrowed": {}}
     print("User registered succesfully\n")
 
 
 def userLogin():
     global current_user
-    username = input("Username: ")
+    username = input("Username: ").lower()
+    password = input("Password: ")
     if username not in users:
         print("User not Found!")
         print()
+        return
+    if users[username]["Password"] != password:
+        print("Incorrect Password\n")
         return
     else:
         current_user = username
@@ -230,10 +276,19 @@ def showMyBook():
     if not borrowed:
         print("You haven't borrowed any books yet.\n")
         return
-    print("My Borrowed Books")
-    print("-----------------")
+    book_width = max(len(book) for book in borrowed)
+    book_width = max(book_width, len("Book Name"))
+    qty_width = 10
+    WIDTH = book_width + qty_width + 3
+    print("=" * WIDTH)
+    print("|" + "MY BORROWED BOOKS".center(WIDTH - 2)+ "|")
+    print("=" * WIDTH)
+    print(f"|{'Book Name':<{book_width}}|{'Borrowed':<{qty_width}}|")
+    print("-" * WIDTH) 
     for book, qty in borrowed.items():
-        print(f"{book} (Borrowed: {qty})")
+        print(f"|{book:<{book_width}}|{qty:<{qty_width}}|")
+    print("=" * WIDTH)
+    print()
 
 # ================ MAIN MENU ==================
 def mainMenu():
