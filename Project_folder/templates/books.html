@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<body>
+    <h2>Library Books</h2>
+
+    {% if session.user %}
+        <p>Logged in as {{ session.user }}</p>
+        <a href="/logout">Logout</a>
+    {% endif %}
+
+    <ul>
+        {% for book in library %}
+            <li>
+                <b>{{ book.Book }}</b><br>
+                Available: {{ book.Quantity }}<br>
+
+                {% if session.user %}
+                    <form method="POST" action="/borrow">
+                        <input type="hidden" name="book" value="{{ book.Book }}">
+                        <input type="number" name="qty" min="1">
+                        <button type="submit">Borrow</button>
+                    </form>
+                {% endif %}
+            </li>
+            <hr>
+        {% endfor %}
+    </ul>
+</body>
+</html>
