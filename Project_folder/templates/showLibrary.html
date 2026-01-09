@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Books in Library</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            padding: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: left;
+            font-size: 16px;
+            color: black;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>BOOKS IN LIBRARY</h1>
+
+<table border="1">
+<tr>
+    <th>Book</th>
+    <th>Quantity</th>
+</tr>
+
+{% for item in library %}
+    <tr>
+        <td>{{ item["Book"] }}</td>
+        <td>{{ item["Quantity"] }}</td>
+    </tr>
+{% endfor %}
+</table>
+
+<a href="/admin">Back</a>

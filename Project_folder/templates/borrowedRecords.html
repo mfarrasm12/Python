@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Borrowed Records</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            font-size: 18px;
+            padding: 20px;
+        }
+
+        table {
+            border-collapse: collapse;
+            width: 80%;
+            margin-top: 20px;
+        }
+
+        th, td {
+            border: 1px solid #333;
+            padding: 10px;
+            text-align: left;
+            font-size: 16px;
+        }
+
+        th {
+            background-color: #f2f2f2;
+            font-size: 18px;
+        }
+    </style>
+</head>
+<body>
+
+<h1>Borrowed Records</h1>
+
+<table>
+<tr>
+    <th>Book</th>
+    <th>User</th>
+    <th>Quantity</th>
+</tr>
+
+{% for username, data in users.items() %}
+    {% for book, qty in data.borrowed.items() %}
+    <tr>
+        <td>{{ book }}</td>
+        <td>{{ username }}</td>
+        <td>{{ qty }}</td>
+    </tr>
+    {% endfor %}
+{% endfor %}
+</table>
+
+<a href="/admin">Back</a>
+
+</body>
+</html>

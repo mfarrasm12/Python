@@ -1,0 +1,27 @@
+<h1>Admin Dashboard</h1>
+
+<h2>Add New Book</h2>
+<form action="/admin/add-book" method="post">
+    <input name="book" placeholder="Book Name" required>
+    <input name="qty" type="number" min="1" required>
+    <button>Add</button>
+</form>
+
+<h2>Add Existing Book</h2>
+<form action="/admin/add-existing" method="post">
+    <input name="book" placeholder="Book Name" required>
+    <input name="qty" type="number" min="1" required>
+    <button>Add Stock</button>
+</form>
+
+<a href="/admin/show-library">View Books in Library</a>
+
+<h2>Remove Book</h2>
+<form action="/admin/remove-book" method="post">
+    <input name="book" placeholder="Book Name" required>
+    <button>Remove</button>
+</form>
+
+<a href="/admin/borrowed">View Borrowed Records</a>
+<br>
+<a href="/">Back</a>

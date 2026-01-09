@@ -10,13 +10,14 @@ app.secret_key = os.environ.get("SECRET_KEY", "dev-secret-key")
 
 # ======== DATA STORAGE (TEMPORARY) =========
 library = []
-library.append({
-    "Book": "Python Basics",
-    "Quantity": 5,
-    "Borrowed": 0,
-    "MaxQuantity": 5
-})
-users= {}
+users = {
+    "admin": {
+        "password": "1234",
+        "role": "admin",
+        "borrowed": {}
+    }
+}
+
 
 # ==================== ROUTES ====================
 @app.route("/")
@@ -28,8 +29,67 @@ def about():
     return "This is the about page"
 
 @app.route("/admin")
-def admin():
-    return "Admin Dashboard"
+def adminDashboard():
+    if "user" not in session or session.get("role") != "admin":
+        return redirect(url_for("login"))
+    return render_template("adminDashboard.html", library=library)
+
+@app.route("/admin/add-book", methods=["POST"])
+def add_book():
+    if session.get("role") != "admin":
+        return "Access Denied"
+    book = request.form["book"]
+    qty = int(request.form["qty"])
+    for item in library:
+        if item["Book"].lower() == book.lower():
+            return "This book already exists"
+    library.append({
+        "Book": book,
+        "Quantity": qty,
+        "MaxQuantity": qty,
+        "borrowed": 0
+    })
+    return redirect(url_for("adminDashboard"))
+
+@app.route("/admin/add-existing", methods=["POST"])
+def add_exisiting_book():
+    if session.get("role") != "admin":
+        return "Access Denied"
+    book = request.form["book"]
+    add = int(request.form["qty"])
+    if add <= 0:
+        return "Invalid Quantity"
+    for item in library:
+        if item["Book"].lower() == book.lower():
+            item["MaxQuantity"] += add
+            item["Quantity"] += add
+            return redirect(url_for("adminDashboard"))
+    return "Book not found"
+
+@app.route("/admin/remove-book", methods=["POST"])
+def remove_book():
+    if session.get("role") != "admin":
+        return "Access denied"
+    book = request.form["book"]
+    for item in library:
+        if item["Book"].lower() == book.lower():
+            library.remove(item)
+            return redirect(url_for("adminDashboard"))
+    return "Book not found"
+
+@app.route("/admin/show-library")
+def show_library():
+    if session.get("role") != "admin":
+        return "Access Denied"
+    return render_template("showLibrary.html", library=library)
+    
+
+@app.route("/admin/borrowed")
+def borrowed_records():
+    if session.get("role") != "admin":
+        return "Access Denied"
+    return render_template("borrowedRecords.html", users=users)
+
 
 @app.route("/user")
 def user():
@@ -51,6 +111,7 @@ def register():
 
         users[username] = {
             "password": password,
+            "role": "user",
             "borrowed": {}
         }
 
@@ -72,7 +133,12 @@ def login():
             return "Wrong password"
 
         session["user"] = username   # 🔑 save login
-        return redirect(url_for("show_books"))
+        session["role"] = users[username]["role"]
+
+        if session["role"] == "admin":
+            return redirect(url_for("adminDashboard"))
+        else:
+            return redirect(url_for("show_books"))
 
     return render_template("login.html")
 
@@ -90,19 +156,21 @@ def borrow_book():
     username = session["user"]
     book = request.form["book"]
     qty = int(request.form["qty"])
-
+    found = False
     for item in library:
         if item["Book"] == book:
+            found = True
             if qty > item["Quantity"]:
                 return "Not enough books"
 
             item["Quantity"] -= qty
-            item["Borrowed"] += qty
+            item["borrowed"] += qty
 
             user_books = users[username]["borrowed"]
             user_books[book] = user_books.get(book, 0) + qty
-
             break
+    if not found:
+        return "Book not found"
 
     return redirect(url_for("show_books"))
 
@@ -112,7 +180,7 @@ def return_book(username, book, borrow):
     username = username.lower()
     if username not in users:
         return "User not Found!"
-    user_books = users[username]["Borrowed"]
+    user_books = users[username]["borrowed"]
     if book not in user_books:
         return "You did not borrow this book"
     if borrow <= 0:
@@ -122,7 +190,7 @@ def return_book(username, book, borrow):
     for item in library:
         if item["Book"].lower() == book.lower():
             item["Quantity"] += borrow
-            item["Borrowed"] -= borrow
+            item["borrowed"] -= borrow
             break
     user_books[book] -= borrow
     if user_books[book] == 0:
