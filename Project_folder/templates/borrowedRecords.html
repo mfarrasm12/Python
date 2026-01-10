@@ -1,56 +1,116 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
     <title>Borrowed Records</title>
+
     <style>
         body {
-            font-family: Arial, sans-serif;
-            font-size: 18px;
-            padding: 20px;
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #667eea, #764ba2);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 30px;
+        }
+
+        .container {
+            background: white;
+            width: 900px;
+            padding: 30px;
+            border-radius: 14px;
+            box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+        }
+
+        h1 {
+            text-align: center;
+            margin-bottom: 25px;
+            color: #333;
         }
 
         table {
+            width: 100%;
             border-collapse: collapse;
-            width: 80%;
-            margin-top: 20px;
+            margin-bottom: 25px;
         }
 
         th, td {
-            border: 1px solid #333;
-            padding: 10px;
+            padding: 14px;
             text-align: left;
-            font-size: 16px;
         }
 
         th {
-            background-color: #f2f2f2;
-            font-size: 18px;
+            background-color: #667eea;
+            color: white;
+            font-size: 16px;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f5f6fa;
+        }
+
+        tr:hover {
+            background-color: #e9ecff;
+        }
+
+        td {
+            font-size: 15px;
+            color: #333;
+        }
+
+        .empty {
+            text-align: center;
+            color: #888;
+            padding: 20px;
+            font-style: italic;
+        }
+
+        .back {
+            display: block;
+            text-align: center;
+            text-decoration: none;
+            font-weight: 600;
+            color: #667eea;
+        }
+
+        .back:hover {
+            text-decoration: underline;
         }
     </style>
 </head>
+
 <body>
 
-<h1>Borrowed Records</h1>
+<div class="container">
+    <h1>📄 Borrowed Records</h1>
 
-<table>
-<tr>
-    <th>Book</th>
-    <th>User</th>
-    <th>Quantity</th>
-</tr>
+    <table>
+        <tr>
+            <th>Book</th>
+            <th>User</th>
+            <th>Quantity</th>
+        </tr>
 
-{% for username, data in users.items() %}
-    {% for book, qty in data.borrowed.items() %}
-    <tr>
-        <td>{{ book }}</td>
-        <td>{{ username }}</td>
-        <td>{{ qty }}</td>
-    </tr>
-    {% endfor %}
-{% endfor %}
-</table>
+        {% if records %}
+            {% for row in records %}
+            <tr>
+                <td>{{ row["book"] }}</td>
+                <td>{{ row["username"] }}</td>
+                <td>{{ row["qty"] }}</td>
+            </tr>
+            {% endfor %}
+        {% else %}
+            <tr>
+                <td colspan="3" class="empty">No borrowed records found</td>
+            </tr>
+        {% endif %}
+    </table>
 
-<a href="/admin">Back</a>
+
+    <a href="/admin" class="back">⬅ Back to Admin Dashboard</a>
+</div>
 
 </body>
 </html>

@@ -1,29 +1,171 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Library Books</title>
+
+    <style>
+        body {
+            margin: 0;
+            min-height: 100vh;
+            font-family: "Segoe UI", Arial, sans-serif;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            padding: 30px;
+        }
+
+        .container {
+            max-width: 900px;
+            margin: auto;
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .header h2 {
+            margin: 0;
+            color: #333;
+        }
+
+        .user-info {
+            font-size: 14px;
+            color: #555;
+        }
+
+        .user-info a {
+            margin-left: 10px;
+            text-decoration: none;
+            color: #4facfe;
+            font-weight: 600;
+        }
+
+        .user-info a:hover {
+            text-decoration: underline;
+        }
+
+        .return-link {
+            display: inline-block;
+            margin-bottom: 20px;
+            text-decoration: none;
+            color: #4facfe;
+            font-weight: 600;
+        }
+
+        .return-link:hover {
+            text-decoration: underline;
+        }
+
+        .book-list {
+            list-style: none;
+            padding: 0;
+        }
+
+        .book-card {
+            border: 1px solid #ddd;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .book-info {
+            max-width: 60%;
+        }
+
+        .book-info b {
+            font-size: 18px;
+            color: #333;
+        }
+
+        .book-info span {
+            display: block;
+            margin-top: 5px;
+            color: #666;
+        }
+
+        form {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        input[type="number"] {
+            width: 70px;
+            padding: 6px;
+            border-radius: 6px;
+            border: 1px solid #ccc;
+        }
+
+        button {
+            padding: 8px 14px;
+            border: none;
+            border-radius: 6px;
+            background-color: #4facfe;
+            color: white;
+            font-weight: 600;
+            cursor: pointer;
+        }
+
+        button:hover {
+            background-color: #00c6ff;
+        }
+
+        .login-link {
+            text-decoration: none;
+            color: #4facfe;
+            font-weight: 600;
+        }
+    </style>
+</head>
+
 <body>
-    <h2>Library Books</h2>
 
-    {% if session.user %}
-        <p>Logged in as {{ session.user }}</p>
-        <a href="/logout">Logout</a>
-    {% endif %}
+<div class="container">
 
-    <ul>
+    <div class="header">
+        <h2>📚 Library Books</h2>
+
+        <div class="user-info">
+            {% if 'user' in session %}
+                Logged in as <b>{{ session['user'] }}</b>
+                <a href="/logout">Logout</a>
+            {% else %}
+                <a href="/login" class="login-link">Login</a>
+            {% endif %}
+        </div>
+    </div>
+
+    <a href="/return" class="return-link">↩ Return a Book</a>
+
+    <ul class="book-list">
         {% for book in library %}
-            <li>
-                <b>{{ book.Book }}</b><br>
-                Available: {{ book.Quantity }}<br>
+            <li class="book-card">
+                <div class="book-info">
+                    <b>{{ book["name"] }}</b>
+                    <span>Available: {{ book["quantity"] }}</span>
+                </div>
 
-                {% if session.user %}
+                {% if 'user' in session %}
                     <form method="POST" action="/borrow">
-                        <input type="hidden" name="book" value="{{ book.Book }}">
-                        <input type="number" name="qty" min="1">
+                        <input type="hidden" name="book" value="{{ book['name'] }}">
+                        <input type="number" name="qty" min="1" required>
                         <button type="submit">Borrow</button>
                     </form>
                 {% endif %}
             </li>
-            <hr>
         {% endfor %}
     </ul>
+
+</div>
+
 </body>
 </html>
